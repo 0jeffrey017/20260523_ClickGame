@@ -50,7 +50,7 @@ jobs:
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-
-
+      
       # # Test
       # - name: Run tests
       #   uses: game-ci/unity-test-runner@v4
@@ -60,6 +60,12 @@ jobs:
       #     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
       #   with:
       #     githubToken: ${{ secrets.GITHUB_TOKEN }}
+      
+      # 在 Build 之前，確保 Linux 環境有完整的 C++ 編譯支援（Burst 必備）
+      - name: Install Burst Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgomp1 libasound2
 
       # Build
       - name: Build project
@@ -70,7 +76,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: WebGL
-          customParameters: -nosound
+          customParameters: -batchmode -nographics -nosound -no_init_sound -burst-disable-compilation
 
       # 這是給 GitHub Pages 專用的打包上傳工具
       - name: Upload artifact for Pages
