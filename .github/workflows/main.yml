@@ -65,7 +65,7 @@ jobs:
       - name: Install Burst Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgomp1 libasound2
+          sudo apt-get install -y libgomp1 libasound2t64 || sudo apt-get install -y libgomp1 libasound2
 
       # Build
       - name: Build project
