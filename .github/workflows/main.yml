@@ -1,0 +1,99 @@
+name: Build and Deploy Unity WebGL 😎
+
+on:
+  push:
+    branches: [ "main" ] # 👈 換成你的主分支名稱，例如 main 或 master
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:   # 允許你在網頁上手動點擊觸發
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 避免多個部署同時跑造成衝突
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build for WebGL 🛠️
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout (without LFS)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Git LFS
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v4 # 建議順便升級到 v4，速度更快更穩定
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      # Cache Unity Library (大幅縮短第二次以後的 Build 時間)
+      - uses: actions/cache@v4 # 建議升級到 v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+
+      # 這是給 GitHub Pages 專用的打包上傳工具
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/WebGL/WebGL 
+
+      # 這是保留在 GitHub Actions 紀錄裡的常規打包下載（自由選擇是否保留）
+      - name: Upload regular build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-WebGL-Raw
+          path: build
+
+  deploy:
+    name: Deploy to GitHub Pages 🌐
+    needs: build
+    # 🌟 關鍵關鍵！只有在真正的 push（程式碼合併進主分支）時才執行部署，PR 只編譯不部署
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

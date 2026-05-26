@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class MainGameView : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI clickCountText;
+    [SerializeField] private TextMeshProUGUI moneyText;
 
-    public void SetClickCountUI(int clickCount)
+    public void SetMoneyText(ulong moneyCount)
     {
-        clickCountText.text = $"click count: {clickCount}";
+        moneyText.text = $"money: {moneyCount}";
     }
 }

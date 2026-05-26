@@ -37,7 +37,7 @@
       <returns>
         <see langword="true" /> if the association represents a foreign key; otherwise, <see langword="false" />.</returns>
     </member>
-    <member name="P:System.ComponentModel.DataAnnotations.AssociationAttribute.EnemyName">
+    <member name="P:System.ComponentModel.DataAnnotations.AssociationAttribute.Name">
       <summary>Gets the name of the association.</summary>
       <returns>The name of the association.</returns>
     </member>
@@ -246,8 +246,8 @@
     </member>
     <member name="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetName">
       <summary>Returns a value that is used for field display in the UI.</summary>
-      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" /> property are initialized, but a public static property that has a name that matches the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" /> value could not be found for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property.</exception>
-      <returns>The localized string for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" /> property, if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" /> property represents a resource key; otherwise, the non-localized value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" /> property.</returns>
+      <exception cref="T:System.InvalidOperationException">The <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property are initialized, but a public static property that has a name that matches the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> value could not be found for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property.</exception>
+      <returns>The localized string for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property, if the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType" /> property has been specified and the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property represents a resource key; otherwise, the non-localized value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" /> property.</returns>
     </member>
     <member name="M:System.ComponentModel.DataAnnotations.DisplayAttribute.GetOrder">
       <summary>Returns the value of the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Order" /> property.</summary>
@@ -284,7 +284,7 @@ but a public static property with a name matching the <see cref="P:System.Compon
       <summary>Gets or sets a value that is used to group fields in the UI.</summary>
       <returns>A value that is used to group fields in the UI.</returns>
     </member>
-    <member name="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName">
+    <member name="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name">
       <summary>Gets or sets a value that is used for display in the UI.</summary>
       <returns>A value that is used for display in the UI.</returns>
     </member>
@@ -298,8 +298,8 @@ but a public static property with a name matching the <see cref="P:System.Compon
       <returns>A value that will be used to display a watermark in the UI.</returns>
     </member>
     <member name="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ResourceType">
-      <summary>Gets or sets the type that contains the resources for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> properties.</summary>
-      <returns>The type of the resource that contains the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.EnemyName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> properties.</returns>
+      <summary>Gets or sets the type that contains the resources for the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> properties.</summary>
+      <returns>The type of the resource that contains the <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Name" />, <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Prompt" />, and <see cref="P:System.ComponentModel.DataAnnotations.DisplayAttribute.Description" /> properties.</returns>
     </member>
     <member name="P:System.ComponentModel.DataAnnotations.DisplayAttribute.ShortName">
       <summary>Gets or sets a value that is used for the grid column label.</summary>
@@ -707,7 +707,7 @@ Using <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.
       <summary>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.Schema.ColumnAttribute" /> class.</summary>
       <param name="name">The name of the column the property is mapped to.</param>
     </member>
-    <member name="P:System.ComponentModel.DataAnnotations.Schema.ColumnAttribute.EnemyName">
+    <member name="P:System.ComponentModel.DataAnnotations.Schema.ColumnAttribute.Name">
       <summary>Gets the name of the column the property is mapped to.</summary>
       <returns>The name of the column the property is mapped to.</returns>
     </member>
@@ -755,7 +755,7 @@ Using <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.
       <summary>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute" /> class.</summary>
       <param name="name">The name of the associated navigation property, or the name of one or more associated foreign keys.</param>
     </member>
-    <member name="P:System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute.EnemyName">
+    <member name="P:System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute.Name">
       <summary>Gets the name of the associated navigation property or of the associated foreign keys.</summary>
       <returns>The name of the associated navigation property or of the associated foreign keys.</returns>
     </member>
@@ -783,7 +783,7 @@ Using <see cref="P:System.ComponentModel.DataAnnotations.DisplayFormatAttribute.
       <summary>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.Schema.TableAttribute" /> class using the specified name of the table.</summary>
       <param name="name">The name of the table the class is mapped to.</param>
     </member>
-    <member name="P:System.ComponentModel.DataAnnotations.Schema.TableAttribute.EnemyName">
+    <member name="P:System.ComponentModel.DataAnnotations.Schema.TableAttribute.Name">
       <summary>Gets the name of the table the class is mapped to.</summary>
       <returns>The name of the table the class is mapped to.</returns>
     </member>

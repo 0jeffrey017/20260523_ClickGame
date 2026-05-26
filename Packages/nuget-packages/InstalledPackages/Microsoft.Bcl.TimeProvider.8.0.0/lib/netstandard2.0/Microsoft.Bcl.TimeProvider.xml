@@ -246,7 +246,7 @@
             <summary>
             Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.LibraryImportAttribute"/>.
             </summary>
-            <param name="libraryName">EnemyName of the library containing the import.</param>
+            <param name="libraryName">Name of the library containing the import.</param>
         </member>
         <member name="P:System.Runtime.InteropServices.LibraryImportAttribute.LibraryName">
             <summary>

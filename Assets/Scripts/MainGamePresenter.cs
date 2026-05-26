@@ -4,17 +4,16 @@ using VContainer.Unity;
 
 public class MainGamePresenter : IStartable, IDisposable
 {   
-    private readonly MainGameModel _mainGameModel;
     private readonly MainGameView _mainGameView;
-    private readonly ClickView _clickView;
+    private readonly BallSimulationManager _ballSimulationManager;
         
     private DisposableBag _disposableBag;
     
-    public MainGamePresenter(MainGameView view,MainGameModel model,ClickView clickView)
+    public MainGamePresenter(MainGameView view,
+        BallSimulationManager ballSimulationManager)
     {
-        _mainGameModel = model;
         _mainGameView = view;
-        _clickView = clickView;
+        _ballSimulationManager = ballSimulationManager;
     }
     
     public void Start()
@@ -24,32 +23,15 @@ public class MainGamePresenter : IStartable, IDisposable
 
     private void Bind()
     {   
-        Observable.FromEvent(
-                h => _clickView.OnClick += h,
-                h => _clickView.OnClick -= h
-            )
-            .Subscribe(_ =>
-            {
-                _mainGameModel.AddClick(1); 
-            })
-            .AddTo(ref _disposableBag);
-        _mainGameModel.ClickCount
+        _ballSimulationManager.Money
             .Subscribe(v =>
             {
-                _mainGameView.SetClickCountUI(v);
+                _mainGameView.SetMoneyText(v);
             }).AddTo(ref _disposableBag);
     }
-
-    public void AddClick(int clickCount)
-    {
-        _mainGameModel.AddClick(clickCount);
-    }
-
-
+    
     public void Dispose()
     {
         _disposableBag.Dispose();
     }
-
-    
 }
