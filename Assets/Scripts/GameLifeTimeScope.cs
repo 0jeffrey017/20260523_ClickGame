@@ -8,6 +8,7 @@ public class GameLifeTimeScope : LifetimeScope
         builder.Register<MainGameModel>(Lifetime.Singleton);
         builder.RegisterComponentInHierarchy<BallSimulationManager>();
         builder.RegisterComponentInHierarchy<MainGameView>();
+        builder.RegisterComponentInHierarchy<ClickView>();
         
         builder.RegisterEntryPoint<MainGamePresenter>(Lifetime.Scoped);
     }
