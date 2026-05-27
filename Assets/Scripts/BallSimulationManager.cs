@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using R3;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -11,14 +10,15 @@ using UnityEngine.Pool;
 public class BallSimulationManager : MonoBehaviour
 {
     [Header("Simulation Ball Settings")]
-    public int initialBallCount = 100;
-    public int ballsPerClick = 10; 
+    public uint initialBallCount = 100;
+    private uint _ballsPerClick = 1; 
     public float ballRadius = 0.2f;
     public Vector3 boxSize = new Vector3(20f, 20f, 1f);
     public Vector3 ballSpawnPosition = new Vector3(20f, 20f, 1f);
     public float minSpeed = 5f;
     public float maxSpeed = 15f;
     public float ballGravity = 9.80665f;
+    private float _ballDestroyY = -15f;
     
     private ObjectPool<GameObject> _ballPool;
     
@@ -29,12 +29,14 @@ public class BallSimulationManager : MonoBehaviour
     public int pinRowCount = 5; 
     public float pinOffsetX = 2f;
     public float pinOffsetY = 2f;
+    private uint _pinPerHit = 1;
     
     [Header("Rendering")]
     public GameObject ballPrefab;
     public GameObject pinPrefab;
     
-    public ReactiveProperty<ulong> Money = new ReactiveProperty<ulong>(0);
+    // public ReactiveProperty<ulong> Money = new ReactiveProperty<ulong>(0);
+    public Action<uint> OnGetMoney = delegate { };
 
     // Switched to NativeList for dynamic resizing
     private NativeList<float3> _positions;
@@ -45,6 +47,7 @@ public class BallSimulationManager : MonoBehaviour
     private NativeArray<int> _pinBeHit;
     
     private JobHandle _jobHandle;
+    private bool _jobScheduled;
 
     private Vector3 _boxMin;
     private Vector3 _boxMax;
@@ -65,14 +68,15 @@ public class BallSimulationManager : MonoBehaviour
             maxSize: 5000
         );
     }
-    void Start()
+    private void Start()
     {
         _boxMin = -boxSize / 2f;
         _boxMax = boxSize / 2f;
+        _ballDestroyY = -boxSize.y / 2 + 1.0f;
 
         // Initialize lists with an initial capacity to prevent frequent early reallocations
-        _positions = new NativeList<float3>(initialBallCount * 2, Allocator.Persistent);
-        _velocities = new NativeList<float3>(initialBallCount * 2, Allocator.Persistent);
+        _positions = new NativeList<float3>((int)initialBallCount * 2, Allocator.Persistent);
+        _velocities = new NativeList<float3>((int)initialBallCount * 2, Allocator.Persistent);
         _pinPositions =  new NativeArray<float3>(initialPinCount * 2, Allocator.Persistent);
         
         // List
@@ -84,15 +88,9 @@ public class BallSimulationManager : MonoBehaviour
         SpawnPins(pinStartPosition, initialPinCount);
     }
 
-    void Update()
+    private void Update()
     {
-        // 1. Detect Click to Spawn
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            HandleClickSpawn();
-        }
-
-        // If we have no balls, skip physics calculations
+        _jobScheduled = false;
         if (_positions.Length == 0) return;
         
         int count = _positions.Length;
@@ -122,10 +120,13 @@ public class BallSimulationManager : MonoBehaviour
             Gravity = ballGravity
         };
         _jobHandle = job.Schedule(count, 64);
+        _jobScheduled = true;
     }
 
     private void LateUpdate()
     {
+        if (!_jobScheduled) return;
+        
         _inputPositionsCopy.Dispose(_jobHandle);
         _inputVelocitiesCopy.Dispose(_jobHandle);
         
@@ -134,7 +135,7 @@ public class BallSimulationManager : MonoBehaviour
         for (int i = 0; i < _positions.Length; i++)
         {
             _ballTransforms[i].position = _positions[i];
-            if (_positions[i].y < -15f)
+            if (_positions[i].y < _ballDestroyY)
             {
                 GameObject ballGo = _ballTransforms[i].gameObject;
                 _ballPool.Release(ballGo);
@@ -148,29 +149,39 @@ public class BallSimulationManager : MonoBehaviour
             }
         }
         
-        int totalHitsThisFrame = 0;
+        uint totalHitsThisFrame = 0;
         for (int i = 0; i < _pinBeHit.Length; i++)
         {
             if (_pinBeHit[i] == 0) continue;
         
-            totalHitsThisFrame += 1; 
+            totalHitsThisFrame += _pinPerHit; 
         
             _pins[i].LightUpPin();
         }
         
         if (totalHitsThisFrame > 0)
         {
-            Money.Value += (ulong)totalHitsThisFrame; 
+            OnGetMoney?.Invoke(totalHitsThisFrame);
         }
         _pinBeHit.Dispose(_jobHandle);
     }
 
-    private void HandleClickSpawn()
+    public void SetBallsPerClick(uint count)
     {
-        SpawnBalls(ballSpawnPosition, ballsPerClick);
+        _ballsPerClick = count;
+    }
+    
+    public void SetPinPerHit(uint count)
+    {
+        _pinPerHit = count;
     }
 
-    void SpawnBalls(Vector3 origin, int count)
+    public void HandleClickSpawn()
+    {
+        SpawnBalls(ballSpawnPosition, _ballsPerClick);
+    }
+
+    private void SpawnBalls(Vector3 origin, uint count)
     {
         for (int i = 0; i < count; i++)
         {   
