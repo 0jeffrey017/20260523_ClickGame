@@ -21,7 +21,7 @@ public class MainGameModel
         if(Money.Value < _nextBallCost.Value)return false;
 
         Money.Value -= _nextBallCost.Value;
-        _nextBallCost.Value *= 5;
+        _nextBallCost.Value *= 2;
         _ballsPerClick.Value++;
         return true;
     }
@@ -32,7 +32,7 @@ public class MainGameModel
 
         Money.Value -= _nextPinCost.Value;
         _pinPerHit.Value++;
-        _nextPinCost.Value *= 5;
+        _nextPinCost.Value *= 2;
         return true;
     }
 }
